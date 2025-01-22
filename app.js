@@ -11,6 +11,12 @@ const authRoutes = require('./authRoutes'); // Import the routes
 
 app.use(bodyParser.json());
 
+app.use('/auth', authRoutes);
+app.get('/', (req, res) => {
+  res.send('Welcome to the API!');
+});
+
+
 
 const tryPort = (port) => {
   return new Promise((resolve, reject) => {
@@ -51,8 +57,16 @@ app.get('/protected', authenticateToken, (req, res) => {
   res.send('This is a protected route');
 });
 
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
+
+const { sequelize } = require('./models'); // Ensure sequelize is properly imported
+
+sequelize.sync()
+  .then(() => {
+    console.log('Database synced!');
+  })
+  .catch((error) => {
+    console.error('Error syncing the database:', error);
+  });
+
 
 
